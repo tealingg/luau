@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - bench-action
     paths-ignore:
       - "docs/**"
       - "papers/**"
