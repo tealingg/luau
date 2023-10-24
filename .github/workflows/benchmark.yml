@@ -12,13 +12,7 @@ on:
 
 jobs:
   callgrind:
-    strategy:
-      matrix:
-        os: [ubuntu-22.04]
-        benchResultsRepo:
-          - { name: "luau-lang/benchmark-data", branch: "main" }
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Luau repository
         uses: actions/checkout@v3
@@ -85,13 +79,13 @@ jobs:
       - name: Checkout benchmark results
         uses: actions/checkout@v3
         with:
-          repository: ${{ matrix.benchResultsRepo.name }}
-          ref: ${{ matrix.benchResultsRepo.branch }}
+          repository: luau-lang/benchmark-data
+          ref: main
           token: ${{ secrets.BENCH_GITHUB_TOKEN }}
           path: "./gh-pages"
 
       - name: Store results (bench)
-        uses: Roblox/rhysd-github-action-benchmark@v-luau
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: callgrind clang
           tool: "benchmarkluau"
@@ -99,7 +93,7 @@ jobs:
           external-data-json-path: ./gh-pages/bench.json
 
       - name: Store results (bench-codegen)
-        uses: Roblox/rhysd-github-action-benchmark@v-luau
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: callgrind codegen
           tool: "benchmarkluau"
@@ -107,7 +101,7 @@ jobs:
           external-data-json-path: ./gh-pages/bench-codegen.json
 
       - name: Store results (bench-gcc)
-        uses: Roblox/rhysd-github-action-benchmark@v-luau
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: callgrind gcc
           tool: "benchmarkluau"
@@ -115,7 +109,7 @@ jobs:
           external-data-json-path: ./gh-pages/bench-gcc.json
 
       - name: Store results (analyze)
-        uses: Roblox/rhysd-github-action-benchmark@v-luau
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: luau-analyze
           tool: "benchmarkluau"
@@ -123,7 +117,7 @@ jobs:
           external-data-json-path: ./gh-pages/analyze.json
 
       - name: Store results (compile)
-        uses: Roblox/rhysd-github-action-benchmark@v-luau
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: luau-compile
           tool: "benchmarkluau"
@@ -131,7 +125,7 @@ jobs:
           external-data-json-path: ./gh-pages/compile.json
 
       - name: Push benchmark results
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref_name == 'master'
         run: |
           echo "Pushing benchmark results..."
           cd gh-pages
