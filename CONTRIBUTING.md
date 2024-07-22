@@ -33,7 +33,7 @@ As such, feature requests may not be accepted even if a comprehensive RFC is wri
 ## Code style
 
 Contributions to this project are expected to follow the existing code style.
-`.clang-format` file mostly defines syntactic styling rules (you can run `make format` to format the code accordingly).
+`.clang-format` file mostly defines syntactic styling rules (you can run `make format` to format the code accordingly). To avoid formatting inconsistencies, get a clang-format binary version >=15.
 
 As for naming conventions, most Luau components use `lowerCamelCase` for variables and functions, `UpperCamelCase` for types and enums, `kCamelCase` for global constants and `SCARY_CASE` for macros.
 
