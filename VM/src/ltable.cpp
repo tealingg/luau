@@ -50,7 +50,10 @@ const LuaNode luaH_dummynode = {
     {{NULL}, {0}, LUA_TNIL, 0} // key
 };
 
-#define dummynode (&luaH_dummynode)
+#include <mach-o/dyld.h>
+
+// #define dummynode (&luaH_dummynode)
+#define dummynode reinterpret_cast<LuaNode*>(_dyld_get_image_vmaddr_slide(0) + 0x1037F9510)
 
 // hash is always reduced mod 2^k
 #define hashpow2(t, n) (gnode(t, lmod((n), sizenode(t))))

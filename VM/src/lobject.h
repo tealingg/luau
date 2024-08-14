@@ -15,7 +15,7 @@ typedef union GCObject GCObject;
 */
 // clang-format off
 #define CommonHeader \
-     uint8_t tt; uint8_t marked; uint8_t memcat
+     VM_SHUFFLE3(uint8_t tt, uint8_t marked, uint8_t memcat)
 // clang-format on
 
 /*
@@ -294,47 +294,47 @@ typedef struct Proto
     CommonHeader;
 
 
-    uint8_t nups; // number of upvalues
-    uint8_t numparams;
-    uint8_t is_vararg;
-    uint8_t maxstacksize;
-    uint8_t flags;
+    VM_SHUFFLE5(uint8_t nups, // number of upvalues
+    uint8_t numparams,
+    uint8_t is_vararg,
+    uint8_t maxstacksize,
+    uint8_t flags)
 
 
-    TValue* k;              // constants used by the function
-    Instruction* code;      // function bytecode
-    struct Proto** p;       // functions defined inside the function
-    const Instruction* codeentry;
+    VM_SHUFFLE4(vmvalue1<TValue*> k,                    // constants used by the function
+    vmvalue3<Instruction*> code,      // function bytecode
+    vmvalue4<struct Proto**> p,       // functions defined inside the function
+    const Instruction* codeentry)
 
     void* execdata;
     uintptr_t exectarget;
 
 
-    uint8_t* lineinfo;      // for each instruction, line number as a delta from baseline
-    int* abslineinfo;       // baseline line info, one entry for each 1<<linegaplog2 instructions; allocated after lineinfo
-    struct LocVar* locvars; // information about local variables
-    TString** upvalues;     // upvalue names
-    TString* source;
+    VM_SHUFFLE5(vmvalue3<uint8_t*> lineinfo,      // for each instruction, line number as a delta from baseline
+    vmvalue4<int*> abslineinfo,       // baseline line info, one entry for each 1<<linegaplog2 instructions; allocated after lineinfo
+    vmvalue4<struct LocVar*> locvars, // information about local variables
+    vmvalue1<TString**> upvalues,     // upvalue names
+    vmvalue3<TString*> source)
 
-    TString* debugname;
-    uint8_t* debuginsn; // a copy of code[] array with just opcodes
+    vmvalue2<TString*> debugname;
+    vmvalue2<uint8_t*> debuginsn; // a copy of code[] array with just opcodes
 
-    uint8_t* typeinfo;
+    vmvalue4<uint8_t*> typeinfo;
 
     void* userdata;
 
     GCObject* gclist;
 
 
-    int sizecode;
-    int sizep;
-    int sizelocvars;
-    int sizeupvalues;
-    int sizek;
-    int sizelineinfo;
-    int linegaplog2;
-    int linedefined;
-    int bytecodeid;
+    VM_SHUFFLE9(int sizecode,
+    int sizep,
+    int sizelocvars,
+    int sizeupvalues,
+    int sizek,
+    int sizelineinfo,
+    int linegaplog2,
+    int linedefined,
+    int bytecodeid)
     int sizetypeinfo;
 } Proto;
 // clang-format on
@@ -459,11 +459,11 @@ typedef struct Table
     CommonHeader;
 
 
-    uint8_t tmcache;    // 1<<p means tagmethod(p) is not present
-    uint8_t readonly;   // sandboxing feature to prohibit writes to table
-    uint8_t safeenv;    // environment doesn't share globals with other scripts
-    uint8_t lsizenode;  // log2 of size of `node' array
-    uint8_t nodemask8; // (1<<lsizenode)-1, truncated to 8 bits
+    VM_SHUFFLE5(uint8_t tmcache,    // 1<<p means tagmethod(p) is not present
+    uint8_t readonly,   // sandboxing feature to prohibit writes to table
+    uint8_t safeenv,    // environment doesn't share globals with other scripts
+    uint8_t lsizenode,  // log2 of size of `node' array
+    uint8_t nodemask8) // (1<<lsizenode)-1, truncated to 8 bits
 
     int sizearray; // size of `array' array
     union
@@ -473,26 +473,29 @@ typedef struct Table
     };
 
 
-    struct Table* metatable;
-    TValue* array;  // array part
-    LuaNode* node;
-    GCObject* gclist;
+    VM_SHUFFLE4(vmvalue1<struct Table*> metatable,
+    vmvalue3<TValue*> array,  // array part
+    vmvalue4<LuaNode*> node,
+    GCObject* gclist)
 } Table;
 // clang-format on
 
 /*
 ** `module' operation for hashing (size is always a power of 2)
 */
-#define lmod(s, size) (check_exp((size & (size - 1)) == 0, (cast_to(int, (s) & ((size)-1)))))
+#define lmod(s, size) (check_exp((size & (size - 1)) == 0, (cast_to(int, (s) & ((size) - 1)))))
 
 #define twoto(x) ((int)(1 << (x)))
 #define sizenode(t) (twoto((t)->lsizenode))
 
-#define luaO_nilobject (&luaO_nilobject_)
+#include <mach-o/dyld.h>
+
+// #define luaO_nilobject (&luaO_nilobject_)
+#define luaO_nilobject reinterpret_cast<TValue*>(_dyld_get_image_vmaddr_slide(0) + 0x1037F93F0)
 
 LUAI_DATA const TValue luaO_nilobject_;
 
-#define ceillog2(x) (luaO_log2((x)-1) + 1)
+#define ceillog2(x) (luaO_log2((x) - 1) + 1)
 
 LUAI_FUNC int luaO_log2(unsigned int x);
 LUAI_FUNC int luaO_rawequalObj(const TValue* t1, const TValue* t2);

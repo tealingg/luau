@@ -2,6 +2,8 @@
 // This code is based on Lua 5.x implementation licensed under MIT License; see lua_LICENSE.txt for details
 #pragma once
 
+#include <cstdint>
+
 // When debugging complex issues, consider enabling one of these:
 // This will reallocate the stack very aggressively at every opportunity; use this with asan to catch stale stack pointers
 // #define HARDSTACKTESTS 1
@@ -148,3 +150,143 @@
 #endif
 
 #define LUA_EXTRA_SIZE (LUA_VECTOR_SIZE - 2)
+
+#define VM_SHUFFLECOMMA ,
+
+#define VM_SHUFFLE3(a1, a2, a3) \
+    a2; \
+    a3; \
+    a1;
+#define VM_SHUFFLE4(a1, a2, a3, a4) \
+    a2; \
+    a4; \
+    a3; \
+    a1;
+#define VM_SHUFFLE5(a1, a2, a3, a4, a5) \
+    a1; \
+    a2; \
+    a5; \
+    a4; \
+    a3;
+#define VM_SHUFFLE6(a1, a2, a3, a4, a5, a6) \
+    a4; \
+    a1; \
+    a6; \
+    a5; \
+    a3; \
+    a2;
+#define VM_SHUFFLE8(a1, a2, a3, a4, a5, a6, a7, a8) \
+    a6; \
+    a4; \
+    a1; \
+    a2; \
+    a8; \
+    a5; \
+    a7; \
+    a3;
+#define VM_SHUFFLE9(a1, a2, a3, a4, a5, a6, a7, a8, a9) \
+    a4; \
+    a7; \
+    a6; \
+    a5; \
+    a2; \
+    a3; \
+    a1; \
+    a9; \
+    a8;
+
+
+template<typename T>
+struct vmvalue1
+{
+public:
+    operator const T() const
+    {
+        return (T)((uintptr_t)storage - (uintptr_t)this);
+    }
+
+    void operator=(const T& value)
+    {
+        storage = (T)((uintptr_t)value + (uintptr_t)this);
+    }
+
+    const T operator->() const
+    {
+        return operator const T();
+    }
+
+private:
+    T storage;
+};
+
+
+template<typename T>
+struct vmvalue2
+{
+public:
+    operator const T() const
+    {
+        return (T)((uintptr_t)this - (uintptr_t)storage);
+    }
+
+    void operator=(const T& value)
+    {
+        storage = (T)((uintptr_t)this - (uintptr_t)value);
+    }
+
+    const T operator->() const
+    {
+        return operator const T();
+    }
+
+private:
+    T storage;
+};
+
+
+template<typename T>
+struct vmvalue3
+{
+public:
+    operator const T() const
+    {
+        return (T)((uintptr_t)this ^ (uintptr_t)storage);
+    }
+
+    void operator=(const T& value)
+    {
+        storage = (T)((uintptr_t)value ^ (uintptr_t)this);
+    }
+
+    const T operator->() const
+    {
+        return operator const T();
+    }
+
+private:
+    T storage;
+};
+
+
+template<typename T>
+struct vmvalue4
+{
+public:
+    operator const T() const
+    {
+        return (T)((uintptr_t)this + (uintptr_t)storage);
+    }
+
+    void operator=(const T& value)
+    {
+        storage = (T)((uintptr_t)value - (uintptr_t)this);
+    }
+
+    const T operator->() const
+    {
+        return operator const T();
+    }
+
+private:
+    T storage;
+};
