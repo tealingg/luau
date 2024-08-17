@@ -301,25 +301,25 @@ typedef struct Proto
     uint8_t flags)
 
 
-    VM_SHUFFLE4(vmvalue1<TValue*> k,                    // constants used by the function
-    vmvalue3<Instruction*> code,      // function bytecode
-    vmvalue4<struct Proto**> p,       // functions defined inside the function
+    VM_SHUFFLE4(vmvalue3<TValue*> k,                    // constants used by the function
+    vmvalue4<Instruction*> code,      // function bytecode
+    vmvalue2<struct Proto**> p,       // functions defined inside the function
     const Instruction* codeentry)
 
     void* execdata;
     uintptr_t exectarget;
 
 
-    VM_SHUFFLE5(vmvalue3<uint8_t*> lineinfo,      // for each instruction, line number as a delta from baseline
-    vmvalue4<int*> abslineinfo,       // baseline line info, one entry for each 1<<linegaplog2 instructions; allocated after lineinfo
-    vmvalue4<struct LocVar*> locvars, // information about local variables
-    vmvalue1<TString**> upvalues,     // upvalue names
-    vmvalue3<TString*> source)
+    VM_SHUFFLE5(vmvalue4<uint8_t*> lineinfo,      // for each instruction, line number as a delta from baseline
+    vmvalue2<int*> abslineinfo,       // baseline line info, one entry for each 1<<linegaplog2 instructions; allocated after lineinfo
+    vmvalue1<struct LocVar*> locvars, // information about local variables
+    vmvalue3<TString**> upvalues,     // upvalue names
+    vmvalue4<TString*> source)
 
-    vmvalue2<TString*> debugname;
-    vmvalue2<uint8_t*> debuginsn; // a copy of code[] array with just opcodes
+    vmvalue1<TString*> debugname;
+    vmvalue3<uint8_t*> debuginsn; // a copy of code[] array with just opcodes
 
-    vmvalue4<uint8_t*> typeinfo;
+    vmvalue1<uint8_t*> typeinfo;
 
     void* userdata;
 
@@ -473,9 +473,9 @@ typedef struct Table
     };
 
 
-    VM_SHUFFLE4(vmvalue1<struct Table*> metatable,
-    vmvalue3<TValue*> array,  // array part
-    vmvalue4<LuaNode*> node,
+    VM_SHUFFLE4(vmvalue3<struct Table*> metatable,
+    vmvalue4<TValue*> array,  // array part
+    vmvalue1<LuaNode*> node,
     GCObject* gclist)
 } Table;
 // clang-format on
@@ -491,7 +491,7 @@ typedef struct Table
 #include <mach-o/dyld.h>
 
 // #define luaO_nilobject (&luaO_nilobject_)
-#define luaO_nilobject reinterpret_cast<TValue*>(_dyld_get_image_vmaddr_slide(0) + 0x1037F93F0)
+#define luaO_nilobject reinterpret_cast<TValue*>(_dyld_get_image_vmaddr_slide(0) + 0x103813710)
 
 LUAI_DATA const TValue luaO_nilobject_;
 

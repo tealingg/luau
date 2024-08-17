@@ -44,16 +44,16 @@ static_assert(TKey{{NULL}, {0}, LUA_TDEADKEY, 0}.tt == LUA_TDEADKEY, "not enough
 static_assert(TKey{{NULL}, {0}, LUA_TNIL, MAXSIZE - 1}.next == MAXSIZE - 1, "not enough bits for next");
 static_assert(TKey{{NULL}, {0}, LUA_TNIL, -(MAXSIZE - 1)}.next == -(MAXSIZE - 1), "not enough bits for next");
 
-// empty hash data points to dummynode so that we can always dereference it
-const LuaNode luaH_dummynode = {
-    {{NULL}, {0}, LUA_TNIL},   // value
-    {{NULL}, {0}, LUA_TNIL, 0} // key
-};
-
 #include <mach-o/dyld.h>
 
-// #define dummynode (&luaH_dummynode)
-#define dummynode reinterpret_cast<LuaNode*>(_dyld_get_image_vmaddr_slide(0) + 0x1037F9510)
+// empty hash data points to dummynode so that we can always dereference it
+/*const LuaNode luaH_dummynode = {
+    {{NULL}, {0}, LUA_TNIL},   // value
+    {{NULL}, {0}, LUA_TNIL, 0} // key
+};*/
+#define luaH_dummynode reinterpret_cast<LuaNode>(_dyld_get_image_vmaddr_slide(0) + 0x104138920)
+
+#define dummynode (&luaH_dummynode)
 
 // hash is always reduced mod 2^k
 #define hashpow2(t, n) (gnode(t, lmod((n), sizenode(t))))

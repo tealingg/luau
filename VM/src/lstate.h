@@ -199,8 +199,8 @@ typedef struct global_State
     VM_SHUFFLE5(struct lua_State* mainthread,   
     UpVal uvhead,                                    // head of double-linked list of all open upvalues
     struct Table* mt[LUA_T_COUNT],                   // metatables for basic types
-    vmvalue3<TString*> ttname[LUA_T_COUNT],       // names for basic types
-    vmvalue4<TString*> tmname[TM_N])             // array with tag-method names
+    vmvalue4<TString*> ttname[LUA_T_COUNT],       // names for basic types
+    vmvalue1<TString*> tmname[TM_N])             // array with tag-method names
 
     TValue pseudotemp; // storage for temporary values used in pseudo2addr
 
@@ -246,7 +246,7 @@ struct lua_State
 
     VM_SHUFFLE6(StkId top,                                        // first free slot in the stack
     StkId base,                                       // base of current function
-    vmvalue1<global_State*> global,
+    vmvalue2<global_State*> global,
     CallInfo* ci,                                     // call info for current function
     StkId stack_last,                                 // last free slot in the stack
     StkId stack)                                     // stack base

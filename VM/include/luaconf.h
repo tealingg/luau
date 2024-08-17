@@ -154,20 +154,20 @@
 #define VM_SHUFFLECOMMA ,
 
 #define VM_SHUFFLE3(a1, a2, a3) \
+    a1; \
     a2; \
-    a3; \
-    a1;
+    a3;
 #define VM_SHUFFLE4(a1, a2, a3, a4) \
+    a3; \
     a2; \
     a4; \
-    a3; \
     a1;
 #define VM_SHUFFLE5(a1, a2, a3, a4, a5) \
     a1; \
     a2; \
-    a5; \
     a4; \
-    a3;
+    a3; \
+    a5;
 #define VM_SHUFFLE6(a1, a2, a3, a4, a5, a6) \
     a4; \
     a1; \
@@ -185,15 +185,15 @@
     a7; \
     a3;
 #define VM_SHUFFLE9(a1, a2, a3, a4, a5, a6, a7, a8, a9) \
+    a1; \
     a4; \
+    a5; \
     a7; \
     a6; \
-    a5; \
-    a2; \
+    a8; \
     a3; \
-    a1; \
-    a9; \
-    a8;
+    a2; \
+    a9;
 
 
 template<typename T>
